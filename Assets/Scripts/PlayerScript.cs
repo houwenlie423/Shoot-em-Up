@@ -13,19 +13,18 @@ public class PlayerScript : MonoBehaviour {
     private Transform t_TempTransform;
 
     private void Update() {
-        if(Input.GetKey(KeyCode.Mouse0))f_Move();
-        if(Input.GetKeyDown(KeyCode.Mouse1)) f_Shoot();
+        f_Move();
+        f_Shoot();
     }
 
     private void f_Move() {
         transform.rotation = Master_Utility.Instance.f_LookAt2D(transform).rotation;
-        transform.Translate(Vector3.up * m_MovementSpeed * Time.deltaTime);
+        if (Input.GetKey(KeyCode.Mouse0)) transform.Translate(Vector3.up * m_MovementSpeed * Time.deltaTime);
 
     }
 
     private void f_Shoot() {
-        //if (Input.GetKeyDown(KeyCode.Space)) Instantiate(m_BulletPrefab, m_FirePoint.position, m_FirePoint.rotation);
-        Master_Utility.Instance.f_ObjPool(m_BulletPrefab, m_FirePoint.position, m_FirePoint.rotation);
+        if (Input.GetKeyDown(KeyCode.Mouse1)) Master_Utility.Instance.f_ObjPool(m_BulletPrefab, m_FirePoint.position, m_FirePoint.rotation);
     }
 
 

@@ -40,7 +40,7 @@ public class Master_Utility : MonoBehaviour {
             m_Pools.Add(Instantiate(p_Object, p_Position, p_Rotation, transform));
         }else {
             m_Pools[t_Idx].transform.position = p_Position;
-            m_Pools[t_Idx].transform.rotation = Quaternion.Euler(0f,0f,p_Rotation.eulerAngles.z - 90f);
+            m_Pools[t_Idx].transform.rotation = p_Rotation;
             m_Pools[t_Idx].SetActive(true);
         }
     }
