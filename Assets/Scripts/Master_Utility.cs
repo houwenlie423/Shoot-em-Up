@@ -35,10 +35,10 @@ public class Master_Utility : MonoBehaviour {
     }
 
     public void f_ObjPool(GameObject p_Object, Vector3 p_Position, Quaternion p_Rotation) {
-        t_Idx = f_GetPoolIdx();
-        if(t_Idx < 0) {
-            m_Pools.Add(Instantiate(p_Object, p_Position, p_Rotation, transform));
-        }else {
+        t_Idx = f_GetPoolIdx(p_Object);
+
+        if (t_Idx < 0) m_Pools.Add(Instantiate(p_Object, p_Position, p_Rotation, transform));
+        else {
             m_Pools[t_Idx].transform.position = p_Position;
             m_Pools[t_Idx].transform.rotation = p_Rotation;
             m_Pools[t_Idx].SetActive(true);
@@ -47,9 +47,9 @@ public class Master_Utility : MonoBehaviour {
 
 
     //Supporting functions in private
-    private int f_GetPoolIdx() {
+    private int f_GetPoolIdx(GameObject p_Object) {
         if (m_Pools.Count == 0) return -1;
-        for (t_I = 0; t_I < m_Pools.Count; t_I++) if (!m_Pools[t_I].activeSelf) return t_I;
+        for (t_I = 0; t_I < m_Pools.Count; t_I++) if (!m_Pools[t_I].activeSelf && m_Pools[t_I].tag == p_Object.tag) return t_I;
         return -1;
     }
    
