@@ -23,11 +23,13 @@ public class PlayerScript : MonoBehaviour {
     public float m_MaxHealth;
     public float m_CurrentHealth;
 
+    [Header("Bullet Type")]
+    public bool m_Laser;
+
     [Header("Power Ups")]
     public bool m_DiagonalShot;
     public bool m_RearShot;
     public bool m_SideShot;
-    public bool m_Laser;
     public bool m_DoubleDamage;
 
 
@@ -45,6 +47,8 @@ public class PlayerScript : MonoBehaviour {
         f_Move();
         f_Shoot();
 
+        if (m_DoubleDamage) f_DoubleDamage();
+        else                m_Damage = t_TempDamage;
 
     }
 
@@ -64,7 +68,6 @@ public class PlayerScript : MonoBehaviour {
             if (m_DiagonalShot)     f_DiagonalShot();
             if (m_RearShot)         f_RearShot();
             if (m_SideShot)         f_SideShot();
-            if (m_DoubleDamage)     f_DoubleDamage();
 
             f_RegularShot();
         }

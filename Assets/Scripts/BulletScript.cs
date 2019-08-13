@@ -23,6 +23,10 @@ public class BulletScript : MonoBehaviour {
 
     private void FixedUpdate() {
         t_TempTime -= Time.fixedDeltaTime;
-        if (t_TempTime <= 0) gameObject.SetActive(false);
+        if (t_TempTime <= 0) {
+            m_Rb.velocity = Vector3.zero;
+            gameObject.SetActive(false);
+        }
+
     }
 }
