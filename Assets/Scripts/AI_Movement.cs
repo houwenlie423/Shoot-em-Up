@@ -14,15 +14,22 @@ public class AI_Movement : MonoBehaviour {
     Vector3 m_Dir;
     Transform m_Target;
     Collider2D[] m_Collider;
-    // Start is called before the first frame update
-    void Start()
-    {
-        
+
+    public float m_WaitTime;
+    public float m_PatrolRange;
+    private int t_I;
+    private Vector3 m_Destination;
+    private Vector3 m_PatrolCenter;
+    private float m_CurrentTime;
+
+    void Start(){
+        m_PatrolCenter = transform.position;
+        m_CurrentTime = m_WaitTime;
+        m_Destination = m_PatrolCenter + Master_Utility.Instance.f_SetVector3(Random.Range(-m_PatrolRange, m_PatrolRange+1), Random.Range(-m_PatrolRange, m_PatrolRange+1),0);
     }
 
-    // Update is called once per frame
-    void Update()
-    {
+
+    void Update(){
         f_CheckBehaviour();
     }
 
@@ -30,9 +37,8 @@ public class AI_Movement : MonoBehaviour {
         if(m_State == State_Manager.e_STATE.TARGETING) {
             if(m_Type == State_Manager.e_TYPE.RANGE) {
                 m_Collider = Physics2D.OverlapCircleAll(transform.position, 0.1f, m_Layer);
-                for(int i = 0; i < m_Collider.Length; i++) {
-                    m_State = State_Manager.e_STATE.ATTACK;
-                }
+                for(t_I = 0; t_I < m_Collider.Length; t_I++) m_State = State_Manager.e_STATE.ATTACK;
+
 ;            }
         }
 
@@ -41,14 +47,34 @@ public class AI_Movement : MonoBehaviour {
         }
 
         if (m_State == State_Manager.e_STATE.TARGETING) {
-            f_Move();
+            f_Approach();
+        }
+
+        if(m_State == State_Manager.e_STATE.PATROL) {
+            f_Patrol();
         }
     }
 
-    void f_Move() {
+    private void f_Targetting() {
+
+    }
+
+    private void f_Approach() {
         m_Dir = m_Target.position - transform.position;
         t_Position = Vector3.MoveTowards(transform.position, m_Target.position, m_MovementSpeed * Time.fixedDeltaTime);
-        transform.position = new Vector3(t_Position.x, t_Position.y, transform.position.z);
+        transform.position = Master_Utility.Instance.f_SetVector3(t_Position.x, t_Position.y, transform.position.z);
+    }
+
+    private void f_Patrol() {
+        transform.position = Vector2.MoveTowards(transform.position, m_Destination, m_MovementSpeed * Time.deltaTime);
+        if(Vector2.Distance(transform.position, m_Destination) <= 0.3f) {
+            if (m_CurrentTime <= 0) {
+                m_PatrolCenter = transform.position;
+                m_Destination = m_PatrolCenter + Master_Utility.Instance.f_SetVector3(Random.Range(-m_PatrolRange, m_PatrolRange + 1), Random.Range(-m_PatrolRange, m_PatrolRange + 1), 0);
+                m_CurrentTime = m_WaitTime;
+            
+            }else m_CurrentTime -= Time.deltaTime;
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D p_Collision) {

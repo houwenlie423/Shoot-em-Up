@@ -352,6 +352,8 @@ MonoBehaviour:
   m_Layer:
     serializedVersion: 2
     m_Bits: 0
+  m_WaitTime: 2
+  m_PatrolRange: 5
 --- !u!1 &344845767
 GameObject:
   m_ObjectHideFlags: 0
