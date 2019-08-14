@@ -134,3 +134,5 @@ MonoBehaviour:
   m_Rb: {fileID: 8546896263990978341}
   m_TraverseSpeed: 20
   m_TimeToDisappear: 2
+  m_DamagePop: {fileID: 5257922182973706569, guid: 0b8f42a755ce44498b1e526b98ba0c26,
+    type: 3}

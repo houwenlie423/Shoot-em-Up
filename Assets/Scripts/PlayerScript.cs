@@ -40,7 +40,10 @@ public class PlayerScript : MonoBehaviour {
     private int t_TempDamage;
     private float t_PercentageHP;
 
-    private void Start() { m_Bullet = m_RegularPref;}
+    private void Start() {
+        t_TempDamage = m_Damage; 
+        m_Bullet = m_RegularPref;
+    }
     private void OnEnable() { Instance = this;}
 
     private void Update() {
@@ -73,22 +76,22 @@ public class PlayerScript : MonoBehaviour {
         }
     }
 
-    private void f_RegularShot() { Master_Utility.Instance.f_ObjPool(m_Bullet, m_PointTop.position, m_PointTop.rotation); }
+    private void f_RegularShot() { Master_Utility.Instance.f_ObjPool(m_Bullet, m_PointTop.position, m_PointTop.rotation, false).GetComponent<BulletScript>().f_SetDamage(f_CalculateDamage()); }
 
     private void f_DiagonalShot() {
         m_PointTop.localRotation = Quaternion.Euler(0f, 0f, -45f);
-        Master_Utility.Instance.f_ObjPool(m_Bullet, m_PointTop.position, m_PointTop.rotation);
+        Master_Utility.Instance.f_ObjPool(m_Bullet, m_PointTop.position, m_PointTop.rotation, false).GetComponent<BulletScript>().f_SetDamage(f_CalculateDamage());
         m_PointTop.localRotation = Quaternion.Euler(0f, 0f, 45f);
-        Master_Utility.Instance.f_ObjPool(m_Bullet, m_PointTop.position, m_PointTop.rotation);
+        Master_Utility.Instance.f_ObjPool(m_Bullet, m_PointTop.position, m_PointTop.rotation, false).GetComponent<BulletScript>().f_SetDamage(f_CalculateDamage());
 
         m_PointTop.localRotation = Quaternion.Euler(0f, 0f, 0f);
     }
 
-    private void f_RearShot() { Master_Utility.Instance.f_ObjPool(m_Bullet, m_PointBottom.position, m_PointBottom.rotation);}
+    private void f_RearShot() { Master_Utility.Instance.f_ObjPool(m_Bullet, m_PointBottom.position, m_PointBottom.rotation, false).GetComponent<BulletScript>().f_SetDamage(f_CalculateDamage()); }
 
     private void f_SideShot() {
-        Master_Utility.Instance.f_ObjPool(m_Bullet, m_PointLeft.position, m_PointLeft.rotation);
-        Master_Utility.Instance.f_ObjPool(m_Bullet, m_PointRight.position, m_PointRight.rotation);
+        Master_Utility.Instance.f_ObjPool(m_Bullet, m_PointLeft.position, m_PointLeft.rotation, false).GetComponent<BulletScript>().f_SetDamage(f_CalculateDamage());
+        Master_Utility.Instance.f_ObjPool(m_Bullet, m_PointRight.position, m_PointRight.rotation, false).GetComponent<BulletScript>().f_SetDamage(f_CalculateDamage());
         
     }
 

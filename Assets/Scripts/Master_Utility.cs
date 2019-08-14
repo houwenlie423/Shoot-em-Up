@@ -5,11 +5,14 @@ using UnityEngine;
 public class Master_Utility : MonoBehaviour {
 
     public static Master_Utility Instance;
+    public GameObject m_MyCanvas;
+    public List<GameObject> m_Pools;
 
     private Vector3 m_Diff;
+    private Vector3 t_Vector3;
+    private Vector2 t_Vector2;
     private float m_RotZ;
     private Transform t_Transform;
-    public List<GameObject> m_Pools;
     private int t_I, t_Idx;
 
     private void OnEnable() {
@@ -34,15 +37,34 @@ public class Master_Utility : MonoBehaviour {
         return t_Transform;
     }
 
-    public void f_ObjPool(GameObject p_Object, Vector3 p_Position, Quaternion p_Rotation) {
+    public GameObject f_ObjPool(GameObject p_Object, Vector3 p_Position, Quaternion p_Rotation, bool p_RequireCanvas) {
         t_Idx = f_GetPoolIdx(p_Object);
 
-        if (t_Idx < 0) m_Pools.Add(Instantiate(p_Object, p_Position, p_Rotation, transform));
-        else {
-            m_Pools[t_Idx].transform.position = p_Position;
-            m_Pools[t_Idx].transform.rotation = p_Rotation;
-            m_Pools[t_Idx].SetActive(true);
+        if (t_Idx < 0) {
+            m_Pools.Add(Instantiate(p_Object, p_Position, p_Rotation, p_RequireCanvas? m_MyCanvas.transform : transform));
+            return m_Pools[m_Pools.Count - 1];
         }
+
+        m_Pools[t_Idx].transform.position = p_Position;
+        m_Pools[t_Idx].transform.rotation = p_Rotation;
+        m_Pools[t_Idx].SetActive(true);
+
+        return m_Pools[t_Idx];
+    }
+
+    public Vector3 f_SetVector3(float p_X, float p_Y, float p_Z) {
+        t_Vector3.x = p_X;
+        t_Vector3.y = p_Y;
+        t_Vector3.z = p_Z;
+
+        return t_Vector3;
+    }
+
+    public Vector2 f_SetVector2(float p_X, float p_Y) {
+        t_Vector2.x = p_X;
+        t_Vector2.y = p_Y;
+
+        return t_Vector2;
     }
 
 
