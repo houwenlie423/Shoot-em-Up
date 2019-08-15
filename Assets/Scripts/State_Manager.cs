@@ -4,13 +4,30 @@ using UnityEngine;
 
 public class State_Manager : MonoBehaviour {
     public enum e_TYPE {
-        MELEE,
-        RANGE,
+        Melee,
+        Range,
     }
+
     public enum e_STATE {
-        PATROL,
-        ATTACK,
-        TARGETING
+        Patrol,
+        Attack,
+        Targetting
     }
-    
+
+    public enum e_BoostType {
+        DiagonalShot,
+        RearShot,
+        SideShot,
+        Laser,
+        BonusDmg,
+        HPBoost,
+        Heal
+    }
+
+    public enum e_BulletType {
+        Regular,
+        Laser
+    }
+
 }
+

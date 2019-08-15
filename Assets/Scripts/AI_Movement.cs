@@ -34,23 +34,23 @@ public class AI_Movement : MonoBehaviour {
     }
 
     void f_CheckBehaviour() {
-        if(m_State == State_Manager.e_STATE.TARGETING) {
-            if(m_Type == State_Manager.e_TYPE.RANGE) {
+        if(m_State == State_Manager.e_STATE.Targetting) {
+            if(m_Type == State_Manager.e_TYPE.Range) {
                 m_Collider = Physics2D.OverlapCircleAll(transform.position, 0.1f, m_Layer);
-                for(t_I = 0; t_I < m_Collider.Length; t_I++) m_State = State_Manager.e_STATE.ATTACK;
+                for(t_I = 0; t_I < m_Collider.Length; t_I++) m_State = State_Manager.e_STATE.Attack;
 
 ;            }
         }
 
-        if (m_State == State_Manager.e_STATE.ATTACK) {
+        if (m_State == State_Manager.e_STATE.Attack) {
 
         }
 
-        if (m_State == State_Manager.e_STATE.TARGETING) {
+        if (m_State == State_Manager.e_STATE.Targetting) {
             f_Approach();
         }
 
-        if(m_State == State_Manager.e_STATE.PATROL) {
+        if(m_State == State_Manager.e_STATE.Patrol) {
             f_Patrol();
         }
     }
@@ -79,14 +79,14 @@ public class AI_Movement : MonoBehaviour {
 
     private void OnTriggerEnter2D(Collider2D p_Collision) {
         if(p_Collision.tag == "Player") {
-            m_State = State_Manager.e_STATE.TARGETING;
+            m_State = State_Manager.e_STATE.Targetting;
             m_Target = p_Collision.transform;
         }
     }
 
     private void OnTriggerExit2D(Collider2D p_Collision) {
         if (p_Collision.tag == "Player") {
-            m_State = State_Manager.e_STATE.PATROL;
+            m_State = State_Manager.e_STATE.Patrol;
         }
     }
 

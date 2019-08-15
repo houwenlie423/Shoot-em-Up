@@ -23,39 +23,64 @@ public class PlayerScript : MonoBehaviour {
     public float m_MaxHealth;
     public float m_CurrentHealth;
 
-    [Header("Bullet Type")]
-    public bool m_Laser;
 
-    [Header("Power Ups")]
+    [Header("Boosts")]
+    public State_Manager.e_BulletType m_BulletType;
     public bool m_DiagonalShot;
     public bool m_RearShot;
     public bool m_SideShot;
-    public bool m_DoubleDamage;
 
 
     private Vector3 m_Diff;
     private float m_RotZ;
     private Transform t_TempTransform;
-    private GameObject m_Bullet;
-    private int t_TempDamage;
+    private GameObject m_CurrentBullet;
     private float t_PercentageHP;
 
     private void Start() {
-        t_TempDamage = m_Damage; 
-        m_Bullet = m_RegularPref;
+        m_CurrentBullet = m_RegularPref;
     }
     private void OnEnable() { Instance = this;}
 
     private void Update() {
         f_Move();
         f_Shoot();
-
-        if (m_DoubleDamage) f_DoubleDamage();
-        else                m_Damage = t_TempDamage;
-
     }
 
     public int f_CalculateDamage() { return m_Damage + Random.Range(-1 * m_DamageThreshold, m_DamageThreshold + 1);}
+
+    public void f_ReceiveBoost(State_Manager.e_BoostType p_Type, int p_Val) {
+        switch(p_Type) {
+            case State_Manager.e_BoostType.BonusDmg:
+                f_DamageBoost(p_Val);
+                break;
+
+            case State_Manager.e_BoostType.DiagonalShot:
+                m_DiagonalShot = true;
+                break;
+
+            case State_Manager.e_BoostType.Heal:
+                f_Heal(p_Val);
+                break;
+
+            case State_Manager.e_BoostType.HPBoost:
+                f_HPBoost(p_Val);
+                break;
+
+            case State_Manager.e_BoostType.Laser:
+                f_ChangeBulletType(State_Manager.e_BulletType.Laser);
+                break;
+
+            case State_Manager.e_BoostType.RearShot:
+                m_RearShot = true;
+                break;
+
+            case State_Manager.e_BoostType.SideShot:
+                m_SideShot = true;
+                break;
+
+        }
+    }
 
     private void f_Move() {
         transform.rotation = Master_Utility.Instance.f_LookAt2D(transform).rotation;
@@ -65,8 +90,6 @@ public class PlayerScript : MonoBehaviour {
 
     private void f_Shoot() {
         if(Input.GetKeyDown(KeyCode.Mouse1)) {
-            if (m_Laser)            m_Bullet = m_LaserPref;
-            else                    m_Bullet = m_RegularPref;
 
             if (m_DiagonalShot)     f_DiagonalShot();
             if (m_RearShot)         f_RearShot();
@@ -76,28 +99,29 @@ public class PlayerScript : MonoBehaviour {
         }
     }
 
-    private void f_RegularShot() { Master_Utility.Instance.f_ObjPool(m_Bullet, m_PointTop.position, m_PointTop.rotation, false).GetComponent<BulletScript>().f_SetDamage(f_CalculateDamage()); }
+    private void f_ChangeBulletType(State_Manager.e_BulletType p_BulletType) {
+
+        if (p_BulletType == State_Manager.e_BulletType.Laser)               m_CurrentBullet = m_LaserPref;
+        else if (p_BulletType == State_Manager.e_BulletType.Laser)          m_CurrentBullet = m_RegularPref;
+    }
+
+    private void f_RegularShot() { Master_Utility.Instance.f_ObjPool(m_CurrentBullet, m_PointTop.position, m_PointTop.rotation, false).GetComponent<BulletScript>().f_SetDamage(f_CalculateDamage()); }
 
     private void f_DiagonalShot() {
         m_PointTop.localRotation = Quaternion.Euler(0f, 0f, -45f);
-        Master_Utility.Instance.f_ObjPool(m_Bullet, m_PointTop.position, m_PointTop.rotation, false).GetComponent<BulletScript>().f_SetDamage(f_CalculateDamage());
+        Master_Utility.Instance.f_ObjPool(m_CurrentBullet, m_PointTop.position, m_PointTop.rotation, false).GetComponent<BulletScript>().f_SetDamage(f_CalculateDamage());
         m_PointTop.localRotation = Quaternion.Euler(0f, 0f, 45f);
-        Master_Utility.Instance.f_ObjPool(m_Bullet, m_PointTop.position, m_PointTop.rotation, false).GetComponent<BulletScript>().f_SetDamage(f_CalculateDamage());
+        Master_Utility.Instance.f_ObjPool(m_CurrentBullet, m_PointTop.position, m_PointTop.rotation, false).GetComponent<BulletScript>().f_SetDamage(f_CalculateDamage());
 
         m_PointTop.localRotation = Quaternion.Euler(0f, 0f, 0f);
     }
 
-    private void f_RearShot() { Master_Utility.Instance.f_ObjPool(m_Bullet, m_PointBottom.position, m_PointBottom.rotation, false).GetComponent<BulletScript>().f_SetDamage(f_CalculateDamage()); }
+    private void f_RearShot() { Master_Utility.Instance.f_ObjPool(m_CurrentBullet, m_PointBottom.position, m_PointBottom.rotation, false).GetComponent<BulletScript>().f_SetDamage(f_CalculateDamage()); }
 
     private void f_SideShot() {
-        Master_Utility.Instance.f_ObjPool(m_Bullet, m_PointLeft.position, m_PointLeft.rotation, false).GetComponent<BulletScript>().f_SetDamage(f_CalculateDamage());
-        Master_Utility.Instance.f_ObjPool(m_Bullet, m_PointRight.position, m_PointRight.rotation, false).GetComponent<BulletScript>().f_SetDamage(f_CalculateDamage());
+        Master_Utility.Instance.f_ObjPool(m_CurrentBullet, m_PointLeft.position, m_PointLeft.rotation, false).GetComponent<BulletScript>().f_SetDamage(f_CalculateDamage());
+        Master_Utility.Instance.f_ObjPool(m_CurrentBullet, m_PointRight.position, m_PointRight.rotation, false).GetComponent<BulletScript>().f_SetDamage(f_CalculateDamage());
         
-    }
-
-    private void f_DoubleDamage() {
-        t_TempDamage = m_Damage;
-        m_Damage *= 2;
     }
 
     private void f_HPBoost(float p_Addition) {

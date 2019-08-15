@@ -235,6 +235,7 @@ GameObject:
   - component: {fileID: 231323301}
   - component: {fileID: 231323300}
   - component: {fileID: 231323302}
+  - component: {fileID: 231323303}
   - component: {fileID: 231323299}
   m_Layer: 0
   m_Name: Enemy
@@ -354,6 +355,22 @@ MonoBehaviour:
     m_Bits: 0
   m_WaitTime: 2
   m_PatrolRange: 5
+--- !u!114 &231323303
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 231323298}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d94a8f452f4247ee9a11c0e6d2abc3a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_MaxHealth: 100
+  m_CurrentHealth: 0
+  m_Drops:
+  - {fileID: 2320025621841586146, guid: 0faa8115fb14c4c71b6aadbf2b39392c, type: 3}
 --- !u!1 &344845767
 GameObject:
   m_ObjectHideFlags: 0
@@ -1227,11 +1244,10 @@ MonoBehaviour:
   m_DamageThreshold: 10
   m_MaxHealth: 0
   m_CurrentHealth: 0
-  m_Laser: 0
+  m_BulletType: 0
   m_DiagonalShot: 0
   m_RearShot: 0
   m_SideShot: 0
-  m_DoubleDamage: 0
 --- !u!50 &1844426525
 Rigidbody2D:
   serializedVersion: 4

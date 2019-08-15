@@ -37,4 +37,5 @@ public class BulletScript : MonoBehaviour {
     }
 
     public void f_SetDamage(int p_Dmg) { m_DamageBrought = p_Dmg;  }
+    public int f_GetDamage() { return m_DamageBrought; }
 }
