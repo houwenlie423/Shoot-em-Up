@@ -20,7 +20,6 @@ public class BulletScript : MonoBehaviour {
 
     private void OnTriggerEnter2D(Collider2D p_Col) {
         if (p_Col.tag == "Enemy") {
-            Debug.Log("Damage in bullet : " + m_DamageBrought);
             Master_Utility.Instance.f_ObjPool(m_DamagePop, p_Col.transform.position, p_Col.transform.rotation, true).GetComponent<DmgPop>().f_SetDmg(m_DamageBrought);
             gameObject.SetActive(false);
         }

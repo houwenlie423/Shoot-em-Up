@@ -1,16 +1,26 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
 
 public class PlayerScript : MonoBehaviour {
 
+    //=========================================================================================================================================================================================================
+    //                                                                                           VARIABLES
+    //=========================================================================================================================================================================================================
+
+
     public static PlayerScript Instance;
 
-    [Header("Fire Points")]
+    [Header("Components")]
     public Transform m_PointTop;
     public Transform m_PointRight;
     public Transform m_PointBottom;
     public Transform m_PointLeft;
+    public Image m_HealthBar;
+    public TextMeshProUGUI m_HealthTxt;
+    
 
     [Header("Bullet Type")]
     public GameObject m_RegularPref;
@@ -37,17 +47,27 @@ public class PlayerScript : MonoBehaviour {
     private GameObject m_CurrentBullet;
     private float t_PercentageHP;
 
-    private void Start() {
+
+    //=========================================================================================================================================================================================================
+    //                                                                                           MONOBEHAVIOR
+    //=========================================================================================================================================================================================================
+
+
+    private void OnEnable() { 
+        Instance = this;
         m_CurrentBullet = m_RegularPref;
+        m_CurrentHealth = m_MaxHealth;
+        f_SetHPIndicator();
     }
-    private void OnEnable() { Instance = this;}
 
     private void Update() {
         f_Move();
         f_Shoot();
     }
 
-    public int f_CalculateDamage() { return m_Damage + Random.Range(-1 * m_DamageThreshold, m_DamageThreshold + 1);}
+    //=========================================================================================================================================================================================================
+    //                                                                                         PUBLIC FUNCTIONS
+    //=========================================================================================================================================================================================================
 
     public void f_ReceiveBoost(State_Manager.e_BoostType p_Type, int p_Val) {
         switch(p_Type) {
@@ -82,6 +102,16 @@ public class PlayerScript : MonoBehaviour {
         }
     }
 
+    public int f_CalculateDamage() { return m_Damage + Random.Range(-1 * m_DamageThreshold, m_DamageThreshold + 1); }
+
+    //=========================================================================================================================================================================================================
+    //                                                                                         PRIVATE FUNCTIONS
+    //=========================================================================================================================================================================================================
+
+    //============================================================================================
+    //                                     BASICS                                               //
+    //============================================================================================
+
     private void f_Move() {
         transform.rotation = Master_Utility.Instance.f_LookAt2D(transform).rotation;
         if (Input.GetKey(KeyCode.Mouse0)) transform.Translate(Vector3.up * m_MovementSpeed * Time.deltaTime);
@@ -89,23 +119,56 @@ public class PlayerScript : MonoBehaviour {
     }
 
     private void f_Shoot() {
-        if(Input.GetKeyDown(KeyCode.Mouse1)) {
+        if (Input.GetKeyDown(KeyCode.Mouse1)) {
 
-            if (m_DiagonalShot)     f_DiagonalShot();
-            if (m_RearShot)         f_RearShot();
-            if (m_SideShot)         f_SideShot();
+            if (m_DiagonalShot) f_DiagonalShot();
+            if (m_RearShot) f_RearShot();
+            if (m_SideShot) f_SideShot();
 
             f_RegularShot();
         }
     }
 
-    private void f_ChangeBulletType(State_Manager.e_BulletType p_BulletType) {
+    private void f_SetHPIndicator() {
+        m_HealthBar.fillAmount = m_CurrentHealth / m_MaxHealth;
+        m_HealthTxt.text = m_CurrentHealth + " / " + m_MaxHealth;
+    }
 
-        if (p_BulletType == State_Manager.e_BulletType.Laser)               m_CurrentBullet = m_LaserPref;
-        else if (p_BulletType == State_Manager.e_BulletType.Laser)          m_CurrentBullet = m_RegularPref;
+
+    private void f_ReceiveDmg(int p_Dmg) {
+        m_CurrentHealth -= p_Dmg;
+        if (m_CurrentHealth <= 0) gameObject.SetActive(false);
+        else f_SetHPIndicator();
+
     }
 
     private void f_RegularShot() { Master_Utility.Instance.f_ObjPool(m_CurrentBullet, m_PointTop.position, m_PointTop.rotation, false).GetComponent<BulletScript>().f_SetDamage(f_CalculateDamage()); }
+
+
+    //============================================================================================
+    //                                   POWER UPS                                              //
+    //============================================================================================
+
+    private void f_ChangeBulletType(State_Manager.e_BulletType p_BulletType) {
+
+        if (p_BulletType == State_Manager.e_BulletType.Laser) m_CurrentBullet = m_LaserPref;
+        else if (p_BulletType == State_Manager.e_BulletType.Laser) m_CurrentBullet = m_RegularPref;
+    }
+
+    private void f_HPBoost(float p_Addition) {
+        t_PercentageHP = m_CurrentHealth / m_MaxHealth;
+        m_MaxHealth += p_Addition;
+        m_CurrentHealth = t_PercentageHP * m_MaxHealth;
+
+        f_SetHPIndicator();
+    }
+
+    private void f_Heal(float p_Addition) {
+        if (m_CurrentHealth + p_Addition <= m_MaxHealth) m_CurrentHealth += p_Addition;
+        else m_CurrentHealth = m_MaxHealth;
+
+        f_SetHPIndicator();
+    }
 
     private void f_DiagonalShot() {
         m_PointTop.localRotation = Quaternion.Euler(0f, 0f, -45f);
@@ -116,24 +179,13 @@ public class PlayerScript : MonoBehaviour {
         m_PointTop.localRotation = Quaternion.Euler(0f, 0f, 0f);
     }
 
-    private void f_RearShot() { Master_Utility.Instance.f_ObjPool(m_CurrentBullet, m_PointBottom.position, m_PointBottom.rotation, false).GetComponent<BulletScript>().f_SetDamage(f_CalculateDamage()); }
-
     private void f_SideShot() {
         Master_Utility.Instance.f_ObjPool(m_CurrentBullet, m_PointLeft.position, m_PointLeft.rotation, false).GetComponent<BulletScript>().f_SetDamage(f_CalculateDamage());
         Master_Utility.Instance.f_ObjPool(m_CurrentBullet, m_PointRight.position, m_PointRight.rotation, false).GetComponent<BulletScript>().f_SetDamage(f_CalculateDamage());
-        
+
     }
 
-    private void f_HPBoost(float p_Addition) {
-        t_PercentageHP = m_CurrentHealth / m_MaxHealth;
-        m_MaxHealth += p_Addition;
-        m_CurrentHealth = t_PercentageHP * m_MaxHealth;
-    }
-
-    private void f_Heal(float p_Addition) {
-        if (m_CurrentHealth + p_Addition <= m_MaxHealth)    m_CurrentHealth += p_Addition;
-        else                                                m_CurrentHealth = m_MaxHealth;
-    }
+    private void f_RearShot() { Master_Utility.Instance.f_ObjPool(m_CurrentBullet, m_PointBottom.position, m_PointBottom.rotation, false).GetComponent<BulletScript>().f_SetDamage(f_CalculateDamage()); }
 
     private void f_DamageBoost(int p_Addition) { m_Damage += p_Addition; }
 
